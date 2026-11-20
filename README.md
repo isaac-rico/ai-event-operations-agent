@@ -1,82 +1,55 @@
 # AI Event Operations Agent
 
-This portfolio project grew out of my work on an event analytics platform at TruAbutment. I wanted to explore how an agent could use registration counts and deadlines to help an event coordinator decide what needs attention. All events, registrations, and deadlines in this demo are synthetic.
+A fully booked workshop can still need your attention. In this demo, Sensor Lab has filled all 40 seats, but its demo kits were due to ship yesterday. Ask “Rank operational risks” and the app puts Sensor Lab first. It recommends checking whether the kits shipped and shows the deadline behind that recommendation.
 
-A local, single-operator workbench for four fictional events. Ask about confirmed registrations, open deadlines and operational priorities. Expand the evidence beneath each answer to see the selected tool and its returned records. All data represents **November 19, 2026**. The clock stays fixed so the examples and evaluations are reproducible.
+This project grew out of my work on an event analytics platform at TruAbutment. I wanted to explore a question I faced as an event coordinator: with several events coming up, what should I follow up on first? All four events, their registrations, and their deadlines are fictional. The demo uses a fixed date of November 19, 2026 so you can reproduce the examples.
+
+## Try a conversation
+
+1. Ask “Show Systems Summit performance.” The event has 84 confirmed registrations against a goal of 120. That leaves 36 seats to fill.
+2. In the same tab, ask “What is its deadline?” The app remembers you were discussing Systems Summit and finds its November 21 catering deadline.
+3. Ask “Remember a 3-day deadline window,” then “Show deadlines.” You’ll see Sensor Lab’s overdue shipment and Systems Summit’s upcoming catering deadline. Edge Expo’s deposit is six days away, so it falls outside your window.
+
+Expand “evidence” beneath an answer to see the records used. The risk ranking checks all open tasks, even when you’ve narrowed the deadline list.
 
 ## Run the free demo
 
-From the extracted project folder, with Python 3.12:
+You’ll need Python 3.12. From the project folder, run these commands in a terminal on macOS or Linux:
 
-```bash
-python -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements.txt
-python -m uvicorn eventops.web:app --host 127.0.0.1 --port 8000
-```
+    python -m venv .venv
+    source .venv/bin/activate
+    python -m pip install -r requirements.txt
+    python -m uvicorn eventops.web:app --host 127.0.0.1 --port 8000
 
-On Windows PowerShell, activate with `.\.venv\Scripts\Activate.ps1`. Open http://127.0.0.1:8000. The first launch seeds a local SQLite file with 224 confirmed and nine cancelled registration records. Reopening retains your history and preferences. EVENTOPS_DB selects a different database path.
+On Windows PowerShell, use `.\.venv\Scripts\Activate.ps1` for the activation step. Open http://127.0.0.1:8000 in your browser. The demo runs on your computer without an API key. It recognizes a limited set of question patterns, so start with the examples above.
 
-## Five-minute walkthrough
+## Follow a question through the code
 
-1. Ask **Show Systems Summit performance**. You should see 84 confirmed against 120, 70% attainment, and a gap of 36.
-2. Ask **What is its deadline?** in the same tab. The stored event reference resolves to Systems Summit. Its catering guarantee is due November 21.
-3. Ask **Rank operational risks**. Sensor Lab ranks first because its shipment deadline passed yesterday even though registration is full. Systems Summit ranks second because the catering guarantee is due within two days.
-4. Ask **Remember a 3-day deadline window** and then **Show deadlines**. Sensor Lab and Systems Summit appear. Edge Expo's deposit, six days away, falls outside your preference. A new session keeps the preference while starting fresh conversational context.
+1. Receive the question. The web form in `eventops/index.html` sends the question and a session ID to `POST /chat`. FastAPI validates the request in `eventops/web.py`.
+2. Load context. `eventops/store.py` retrieves the session’s four most recent turns and the operator’s saved deadline window from SQLite. Conversation history helps resolve “its.” The saved window carries over to a new session.
+3. Choose a lookup. In demo mode, `eventops/agent.py` uses rules to select an event and one of three tools: performance, deadlines, or risks. In live mode, `eventops/live.py` lets an OpenAI model choose the tool and event through the Agents SDK.
+4. Retrieve the facts. `eventops/tools.py` runs parameterized SQL queries. Only confirmed registrations count toward a goal. The risk tool ranks overdue work first, tasks due within two days second, and remaining registration shortfalls third. Larger seat gaps break ties.
+5. Show the answer. Python formats the tool’s results, saves the turn, and returns the answer and evidence to the browser. You can check both the selected event and the figures.
 
-## Architecture
+The first launch creates `eventops.sqlite3` with 224 confirmed and nine cancelled registration records. Set `EVENTOPS_DB` to choose a different database path. This version is designed for one local operator.
 
-```mermaid
-flowchart TD
-  UI[Web form] --> API[FastAPI]
-  API --> C[Load last four turns and preference]
-  C --> D[Demo rule router]
-  C --> L[OpenAI Agents SDK]
-  D --> T[Python read tools]
-  L --> T
-  T --> SQL[Parameterized SQLite queries]
-  SQL --> R[Render answer and evidence]
-  R --> M[Save turn in SQLite]
-  M --> UI
-```
+## Optional live OpenAI mode
 
-* **eventops/store.py** owns the schema, idempotent synthetic seed and memory. Session history is the last four turns loaded for one tab. Persistent memory is the operator's explicitly saved deadline window, shared across tabs. Retrieval reads current event records on every question. A remembered answer never becomes the source of a registration count.
-* **eventops/tools.py** defines metric semantics. Confirmed rows count toward the target. Gap is max(target minus confirmed, zero). Rank overdue open work first, tasks due within two days second, remaining registration shortfalls third, and other events fourth. Larger gaps break ties. The risk list considers all open tasks regardless of the display window. This is a transparent triage policy, not a forecast.
-* **eventops/agent.py** coordinates planning, context and rendering. Demo mode recognizes a limited vocabulary and supports one intent per turn. Use the example question patterns. Unfamiliar phrasing can yield clarification or an overly broad match.
-* **eventops/live.py** registers three typed SDK functions. A model receives the question and bounded context and chooses a function and event ID. The SDK dispatches that call. Python renders the returned evidence directly. This bounds numerical errors and keeps arbitrary SQL and external write actions outside the model's capabilities. A wrong event or tool choice can still produce an irrelevant answer.
-* **eventops/web.py** validates the HTTP input and returns a recoverable 503 on failures. The browser shows mode, tool and evidence. Preferences are local writes triggered by the explicit remember command.
+Live questions can incur API charges. Set `OPENAI_API_KEY` in your shell or secret manager. Stop the demo server before starting the live server on the same port. On macOS or Linux:
 
-## First model request and live agent
+    export EVENTOPS_ALLOW_PAID=yes
+    export OPENAI_MODEL=gpt-4.1-mini
+    EVENTOPS_MODE=live python -m uvicorn eventops.web:app --host 127.0.0.1 --port 8000
 
-Demo mode requires no API key. To authorize live spending yourself, configure OPENAI_API_KEY in your shell or secret manager. Keep it out of source control. The following commands are optional. Each model request can incur charges.
+Live mode sends the question and recent conversation context to the model. Use synthetic questions. To try a single paid Responses API request separately, run `python -m eventops.first_request` after setting the key and paid opt-in.
 
-```bash
-export EVENTOPS_ALLOW_PAID=yes
-export OPENAI_MODEL=gpt-4.1-mini
-python -m eventops.first_request
-EVENTOPS_MODE=live python -m uvicorn eventops.web:app --host 127.0.0.1
-```
+## Tests and results
 
-The first script sends one instruction through the Responses API and prints output_text. The live agent extends that model request with function schemas. Compare an identical prompt across demo and live runs using the visible evidence. In live mode, question text and the last four turns are included in model input. Use synthetic questions. Stop the server and restart in default demo mode to resume free operation.
+The offline demo passed 31 of 31 evaluation cases. Each case checks the chosen tool, event, and expected evidence or clarification. This catches errors such as returning an accurate registration count for the wrong workshop. The full suite passed 37 tests, including a failed lookup, saved preferences, and an Agents SDK tool call with a simulated model response.
 
-## Reproduce the evaluation
+Run the checks from the project folder:
 
-```bash
-python -m pytest -q
-python evaluate.py
-```
+    python -m pytest -q
+    python evaluate.py
 
-The 31 JSON cases check route, event scope, and selected evidence or abstention. The evaluator uses a fresh temporary database, one HTTP request per case, and reports accuracy, median and p95 latency and error rate. Additional Pytest cases cover follow-ups, persistent preferences, a failed tool, restricted queries, duplicate seeding, UI entry point, request validation and real SDK dispatch with a simulated model response. See docs/evaluation.json for measured results. These curated cases are a regression suite. Broader paraphrases and held-out questions are needed to establish generalization.
-
-The same evaluator can measure actual model behavior with EVENTOPS_MODE=live and explicit paid opt-in. Running it then sends multiple paid requests. The supplied results are offline only. No hosted deployment, authentication, BigQuery connection, or measured live-model accuracy is included. The operator and their sessions share a single local database; keep the service bound to localhost.
-
-## Portfolio and interview notes
-
-* Built a local FastAPI event operations agent with three typed analytics tools, SQLite-backed conversation context, and evidence-backed registration and deadline triage.
-* Developed a 31-case evaluation set and 37 automated tests, including simulated model dispatch through the OpenAI Agents SDK, tool failure recovery, and access restriction checks.
-
-**Why is this more than a dashboard?** A follow-up can refer to the previous event and use an explicitly saved preference. The agent maps that context to a constrained data operation and shows the result.
-
-**How does this connect to reliability engineering?** The key failure modes are counting cancelled registrations, acting on the wrong event, and answering after a failed query. Demonstrate the corresponding fixture, scope check, and 503 test. A legitimate query against the wrong event remains a failure, which is why evaluation scores both route and event ID.
-
-**How would you extend it?** Replace the event retrieval query with a read-only BigQuery adapter while keeping the tool result contracts. For multiple operators, introduce authenticated ownership of sessions and preferences. Before making live accuracy claims, run a separately labeled held-out evaluation against the chosen model.
+The questions are in `tests/cases.json`. The recorded offline accuracy, latency, and error rate are in `docs/evaluation.json`. Live-model accuracy and latency are still unmeasured. Running the evaluator in live mode with paid requests enabled makes multiple API calls.
