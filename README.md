@@ -1,14 +1,15 @@
 # AI Event Operations Agent
 
-A fully booked workshop can still need your attention. In this demo, Sensor Lab has filled all 40 seats, but its demo kits were due to ship yesterday. Ask “Rank operational risks” and the app puts Sensor Lab first. It recommends checking whether the kits shipped and shows the deadline behind that recommendation.
+This agent helps event coordinators decide what to follow up on first. Ask a question in plain English to check registrations, find upcoming deadlines, or see which event needs attention and why.
 
-This project grew out of my work on an event analytics platform at TruAbutment. I wanted to explore a question I faced as an event coordinator: with several events coming up, what should I follow up on first? All four events, their registrations, and their deadlines are fictional. The demo uses a fixed date of November 19, 2026 so you can reproduce the examples.
+This project grew out of my work on an event analytics platform at TruAbutment. All four events, their registrations, and their deadlines are fictional. The demo uses a fixed date of November 19, 2026 so you can reproduce the examples.
 
 ## Try a conversation
 
 1. Ask “Show Systems Summit performance.” The event has 84 confirmed registrations against a goal of 120. That leaves 36 seats to fill.
 2. In the same tab, ask “What is its deadline?” The app remembers you were discussing Systems Summit and finds its November 21 catering deadline.
 3. Ask “Remember a 3-day deadline window,” then “Show deadlines.” You’ll see Sensor Lab’s overdue shipment and Systems Summit’s upcoming catering deadline. Edge Expo’s deposit is six days away, so it falls outside your window.
+4. Ask “Rank operational risks.” Sensor Lab comes first. All 40 seats are filled, but its demo kits were due to ship November 18. The agent recommends confirming whether they shipped.
 
 Expand “evidence” beneath an answer to see the records used. The risk ranking checks all open tasks, even when you’ve narrowed the deadline list.
 
