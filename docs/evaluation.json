@@ -1,0 +1,11 @@
+{
+  "mode": "demo",
+  "cases": 31,
+  "passed": 31,
+  "route_accuracy": 1.0,
+  "case_accuracy": 1.0,
+  "http_error_rate": 0.0,
+  "median_ms": 1.96,
+  "p95_ms": 5.08,
+  "failures": []
+}

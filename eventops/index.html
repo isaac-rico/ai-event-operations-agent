@@ -1,0 +1,19 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Event operations</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#edf2ed;color:#172f2b;font:17px/1.5 system-ui}main{max-width:820px;margin:7vh auto;padding:24px}header{border-bottom:2px solid #18483a;margin-bottom:24px}h1{font:clamp(40px,7vw,68px)/1.05 Georgia;margin:10px 0}section{padding:22px;background:white;border-radius:12px;margin:16px 0}button,input{font:inherit;padding:9px 13px;border:1px solid #729084;border-radius:7px}button{background:#194837;color:white;cursor:pointer;margin:3px}input{width:100%;margin:8px 0}pre{white-space:pre-wrap;font:inherit}summary{cursor:pointer}small{color:#49605a}</style>
+<main><header><small>OPERATIONS DESK</small><h1>Event operations</h1><p>Synthetic portfolio · November 19, 2026 snapshot</p></header>
+<div id="examples"></div><section><form><label for="q">Ask about an event</label><input id="q" maxlength="1000" required placeholder="How many seats short is Systems Summit?"><button id="ask">Ask agent</button></form></section><div aria-live="polite" id="output"></div></main>
+<script>
+const session = sessionStorage.sid ||= crypto.randomUUID();
+const q=document.querySelector('#q'), form=document.querySelector('form'),out=document.querySelector('#output');
+for(const prompt of ['Rank operational risks','Show deadlines','Show Sensor Lab performance','Remember a 3-day deadline window']){
+ const b=document.createElement('button'); b.textContent=prompt;b.onclick=()=>{q.value=prompt;q.focus()};examples.append(b)}
+form.onsubmit=async e=>{e.preventDefault();if(ask.disabled)return;ask.disabled=true;ask.textContent='Checking…';
+const question=q.value;const card=document.createElement('section');out.prepend(card);
+try{const res=await fetch('/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question,session})});
+const data=await res.json();if(!res.ok)throw Error(typeof data.detail==='string'?data.detail:'Request failed');
+const heading=document.createElement('strong');heading.textContent=question;const answer=document.createElement('pre');answer.textContent=data.answer;
+const details=document.createElement('details'),summary=document.createElement('summary'),raw=document.createElement('pre');
+summary.textContent=data.mode+' · '+data.tool+' · evidence';raw.textContent=JSON.stringify(data.evidence,null,2);details.append(summary,raw);card.append(heading,answer,details);q.value='';}
+catch(err){card.textContent=err.message}finally{ask.disabled=false;ask.textContent='Ask agent'}};
+</script></html>

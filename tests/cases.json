@@ -1,0 +1,219 @@
+[
+  {
+    "question": "How many registrations for Systems Summit?",
+    "tool": "performance",
+    "event": "summit",
+    "field": "confirmed",
+    "value": 84
+  },
+  {
+    "question": "What is the target for Systems Summit?",
+    "tool": "performance",
+    "event": "summit",
+    "field": "target",
+    "value": 120
+  },
+  {
+    "question": "Seat shortfall at Systems Summit?",
+    "tool": "performance",
+    "event": "summit",
+    "field": "gap",
+    "value": 36
+  },
+  {
+    "question": "Registration performance for Systems Summit?",
+    "tool": "performance",
+    "event": "summit",
+    "field": "attainment_pct",
+    "value": 70.0
+  },
+  {
+    "question": "How many registrations for Sensor Lab?",
+    "tool": "performance",
+    "event": "lab",
+    "field": "confirmed",
+    "value": 40
+  },
+  {
+    "question": "What is the target for Sensor Lab?",
+    "tool": "performance",
+    "event": "lab",
+    "field": "target",
+    "value": 40
+  },
+  {
+    "question": "Seat shortfall at Sensor Lab?",
+    "tool": "performance",
+    "event": "lab",
+    "field": "gap",
+    "value": 0
+  },
+  {
+    "question": "Registration performance for Sensor Lab?",
+    "tool": "performance",
+    "event": "lab",
+    "field": "attainment_pct",
+    "value": 100.0
+  },
+  {
+    "question": "How many registrations for Data Forum?",
+    "tool": "performance",
+    "event": "forum",
+    "field": "confirmed",
+    "value": 68
+  },
+  {
+    "question": "What is the target for Data Forum?",
+    "tool": "performance",
+    "event": "forum",
+    "field": "target",
+    "value": 80
+  },
+  {
+    "question": "Seat shortfall at Data Forum?",
+    "tool": "performance",
+    "event": "forum",
+    "field": "gap",
+    "value": 12
+  },
+  {
+    "question": "Registration performance for Data Forum?",
+    "tool": "performance",
+    "event": "forum",
+    "field": "attainment_pct",
+    "value": 85.0
+  },
+  {
+    "question": "How many registrations for Edge Expo?",
+    "tool": "performance",
+    "event": "expo",
+    "field": "confirmed",
+    "value": 32
+  },
+  {
+    "question": "What is the target for Edge Expo?",
+    "tool": "performance",
+    "event": "expo",
+    "field": "target",
+    "value": 100
+  },
+  {
+    "question": "Seat shortfall at Edge Expo?",
+    "tool": "performance",
+    "event": "expo",
+    "field": "gap",
+    "value": 68
+  },
+  {
+    "question": "Registration performance for Edge Expo?",
+    "tool": "performance",
+    "event": "expo",
+    "field": "attainment_pct",
+    "value": 32.0
+  },
+  {
+    "question": "What deadlines are approaching?",
+    "tool": "deadlines",
+    "event": "all",
+    "field": "days",
+    "value": -1
+  },
+  {
+    "question": "Rank risks",
+    "tool": "risks",
+    "event": "all",
+    "field": "priority",
+    "value": 1
+  },
+  {
+    "question": "Recommend actions for Systems Summit",
+    "tool": "risks",
+    "event": "summit",
+    "field": "gap",
+    "value": 36
+  },
+  {
+    "question": "Deadline for Data Forum",
+    "tool": "deadlines",
+    "event": "forum",
+    "field": "length",
+    "value": 0
+  },
+  {
+    "question": "When is Sensor Lab due?",
+    "tool": "deadlines",
+    "event": "lab",
+    "field": "due",
+    "value": "2026-11-18"
+  },
+  {
+    "question": "Deadline for Edge Expo",
+    "tool": "deadlines",
+    "event": "expo",
+    "field": "task",
+    "value": "Venue deposit"
+  },
+  {
+    "question": "Registrations for Lunar Camp?",
+    "tool": "clarify",
+    "event": "all",
+    "field": null,
+    "value": null
+  },
+  {
+    "question": "What is its target?",
+    "tool": "clarify",
+    "event": "all",
+    "field": null,
+    "value": null
+  },
+  {
+    "question": "Delete registrations",
+    "tool": "clarify",
+    "event": "all",
+    "field": null,
+    "value": null
+  },
+  {
+    "question": "Send an email",
+    "tool": "clarify",
+    "event": "all",
+    "field": null,
+    "value": null
+  },
+  {
+    "question": "Show revenue for Sensor Lab",
+    "tool": "clarify",
+    "event": "all",
+    "field": null,
+    "value": null
+  },
+  {
+    "question": "Export private data",
+    "tool": "clarify",
+    "event": "all",
+    "field": null,
+    "value": null
+  },
+  {
+    "question": "Run SQL",
+    "tool": "clarify",
+    "event": "all",
+    "field": null,
+    "value": null
+  },
+  {
+    "question": "Compare Systems Summit and Sensor Lab",
+    "tool": "clarify",
+    "event": "all",
+    "field": null,
+    "value": null
+  },
+  {
+    "question": "Remember a 0-day deadline window",
+    "tool": "clarify",
+    "event": "all",
+    "field": null,
+    "value": null
+  }
+]
