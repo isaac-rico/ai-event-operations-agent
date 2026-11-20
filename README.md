@@ -54,3 +54,20 @@ Run the checks from the project folder:
     python evaluate.py
 
 The questions are in `tests/cases.json`. The recorded offline accuracy, latency, and error rate are in `docs/evaluation.json`. Live-model accuracy and latency are still unmeasured. Running the evaluator in live mode with paid requests enabled makes multiple API calls.
+
+## Portfolio and interview notes
+
+- Built a local FastAPI agent with three typed Python tools for registration counts, deadline checks, and risk ranking. SQLite stores conversation history and the operator’s saved deadline window. Each lookup shows the records behind the answer.
+- Built a 37-test suite that includes 31 evaluation cases. Additional tests cover tool access restrictions, how the app handles a failed lookup, and how the OpenAI Agents SDK executes a tool call from a simulated model response.
+
+### What does the conversation add to a dashboard?
+
+After checking Systems Summit’s registrations, a coordinator can ask “What is its deadline?” The agent uses the previous turn to identify the event and queries its deadline. If the coordinator saves a three-day window, future deadline lists use that preference, including in a new session.
+
+### Where does reliability engineering come in?
+
+I started with three ways an answer could mislead a coordinator. Counting cancellations would turn 84 confirmed seats into 87, so the test data includes both registration statuses. Looking up the wrong event could return a plausible number, so the evaluation checks both the selected tool and the event ID. If a lookup fails, a separate test verifies that the API returns HTTP 503 and the coordinator sees an error message.
+
+### What would I build next?
+
+For warehouse data, I’d add a read-only BigQuery connection that returns the same fields as the SQLite tools. For a team rollout, I’d add sign-in and tie each session and preference to its owner. To measure live-model accuracy, I’d run the chosen model against a separate set of questions held back during development and report those results alongside the offline baseline.
